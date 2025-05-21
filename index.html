@@ -2,8 +2,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Missão da Semana - Game Familiar</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; }
@@ -15,77 +15,114 @@
     .controls { margin-bottom: 20px; }
     button { padding: 8px 12px; margin: 5px; }
     #suggestionsTable { display: none; margin-top: 20px; }
+    #loginArea { text-align: center; margin-bottom: 30px; }
+    #mainContent { display: none; }
   </style>
 </head>
 <body>
-  <h1>Missão da Semana - Game Familiar</h1>
-
-  <div class="controls">
-    <label>Jogador:
-      <select id="playerSelect">
-        <option value="Alan">Alan</option>
-        <option value="Daniela">Daniela</option>
-        <option value="Vinicius">Vinicius</option>
-        <option value="Alani">Alani</option>
-      </select>
-    </label>
-    <label>Pontos:
-      <select id="pointSelect">
-        <!-- Pontos positivos de 1 a 50 -->
-        <script>
-          document.write([...Array(50).keys()].map(i => `<option value="${i + 1}">${i + 1}</option>`).join(''));
-          document.write([...Array(50).keys()].map(i => `<option value="-${i + 1}">-${i + 1}</option>`).join(''));
-        </script>
-      </select>
-    </label>
-    <button onclick="addEntry()">Adicionar Pontos</button>
-    <button onclick="showSuggestions()">Ver Tabela de Sugestões</button>
+  <div id="loginArea">
+    <h2>Login</h2>
+    <label for="username">Usuário:</label>
+    <select id="username">
+      <option value="Alan">Alan</option>
+      <option value="Daniela">Daniela</option>
+      <option value="Vinicius">Vinicius</option>
+      <option value="Alani">Alani</option>
+    </select>
+    <button onclick="login()">Entrar</button>
   </div>
 
-  <table>
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Jogador</th>
-        <th>Pontos</th>
-        <th>Data/Hora</th>
-      </tr>
-    </thead>
-    <tbody id="entries"></tbody>
-  </table>
+  <div id="mainContent">
+    <h1>Missão da Semana - Game Familiar</h1>
 
-  <div>
-    <button onclick="showSummary()">Resumo Semanal</button>
-    <div id="summary"></div>
-  </div>
+    <div class="controls">
+      <label>Jogador:
+        <select id="playerSelect">
+          <option value="Alan">Alan</option>
+          <option value="Daniela">Daniela</option>
+          <option value="Vinicius">Vinicius</option>
+          <option value="Alani">Alani</option>
+        </select>
+      </label>
+      <label>Pontos:
+        <select id="pointSelect"></select>
+      </label>
+      <button onclick="addEntry()">Adicionar Pontos</button>
+      <button onclick="showSuggestions()">Ver Tabela de Sugestões</button>
+    </div>
 
-  <div id="suggestionsTable">
-    <h3>Sugestões de Atividades (1 a 50 pontos)</h3>
-    <ul>
-      <li>1-5: Pequenas ajudas ou atitudes positivas</li>
-      <li>10: Arrumar a cama, tirar o lixo</li>
-      <li>15: Lavar louça, guardar compras</li>
-      <li>20: Organizar materiais, brincar com irmão(a)</li>
-      <li>25: Levar cachorro para passear, limpar banheiro</li>
-      <li>30: Estudar 1h, atividade física, ler livro</li>
-      <li>35: Preparar refeição, lavar roupas</li>
-      <li>40: Cuidar da casa, resolver problema difícil</li>
-      <li>45: Consertar algo, ajudar em algo complicado</li>
-      <li>50: Grande conquista, super tarefa da semana</li>
-      <li>-1 a -10: Atitude negativa, preguiça, desobediência</li>
-      <li>-20 a -50: Desrespeito, discussão, sobrecarregou os outros</li>
-    </ul>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Jogador</th>
+          <th>Pontos</th>
+          <th>Data/Hora</th>
+          <th>Adicionado por</th>
+        </tr>
+      </thead>
+      <tbody id="entries"></tbody>
+    </table>
+
+    <div>
+      <button onclick="showSummary()">Resumo Semanal</button>
+      <div id="summary"></div>
+    </div>
+
+    <div id="suggestionsTable">
+      <h3>Sugestões de Atividades (1 a 50 pontos / -1 a -50)</h3>
+      <ul>
+        <li>1-5: Pequenas ajudas ou atitudes positivas</li>
+        <li>10: Arrumar a cama, tirar o lixo</li>
+        <li>15: Lavar louça, guardar compras</li>
+        <li>20: Organizar materiais, brincar com irmão(a)</li>
+        <li>25: Levar cachorro para passear, limpar banheiro</li>
+        <li>30: Estudar 1h, atividade física, ler livro</li>
+        <li>35: Preparar refeição, lavar roupas</li>
+        <li>40: Cuidar da casa, resolver problema difícil</li>
+        <li>45: Consertar algo, ajudar em algo complicado</li>
+        <li>50: Grande conquista, super tarefa da semana</li>
+        <li>-1 a -10: Atitude negativa, preguiça, desobediência</li>
+        <li>-20 a -50: Desrespeito, discussão, sobrecarregou os outros</li>
+      </ul>
+    </div>
   </div>
 
   <script>
     let entries = [];
     let idCounter = 1;
+    let loggedUser = null;
+
+    // Preencher opções de pontuação de -50 a 50
+    const pointSelect = document.getElementById('pointSelect');
+    for (let i = -50; i <= 50; i++) {
+      if (i !== 0) {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = i;
+        pointSelect.appendChild(opt);
+      }
+    }
+
+    function login() {
+      const username = document.getElementById('username').value;
+      loggedUser = username;
+      document.getElementById('loginArea').style.display = 'none';
+      document.getElementById('mainContent').style.display = 'block';
+    }
 
     function addEntry() {
+      if (!loggedUser) return alert("Você precisa estar logado!");
       const player = document.getElementById('playerSelect').value;
       const points = parseInt(document.getElementById('pointSelect').value);
       const timestamp = new Date().toLocaleString();
-      const entry = { id: idCounter++, player, points, timestamp };
+      const entry = {
+        id: idCounter++,
+        player,
+        points,
+        timestamp,
+        addedBy: loggedUser
+      };
       entries.push(entry);
       renderEntries();
     }
@@ -100,6 +137,7 @@
           <td>${e.player}</td>
           <td>${e.points}</td>
           <td>${e.timestamp}</td>
+          <td>${e.addedBy}</td>
         `;
         tbody.appendChild(row);
       });
