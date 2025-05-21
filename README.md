@@ -24,6 +24,8 @@
       <select id="playerSelect">
         <option value="adolescente">Filho Adolescente</option>
         <option value="menor">Filha Mais Nova</option>
+        <option value="pai">Pai</option>
+        <option value="mae">Mãe</option>
       </select>
     </label>
     <label>Tarefa:
@@ -36,6 +38,12 @@
         <option value="Ajudar familia">Ajudar família (15)</option>
         <option value="Ler 30min">Ler 30 minutos (20)</option>
         <option value="Atividade fisica">Atividade física 30min (20)</option>
+        <!-- Tarefas para adultos -->
+        <option value="Fazer compras">Fazer compras (20)</option>
+        <option value="Pagar contas">Pagar contas (15)</option>
+        <option value="Cuidar do jardim">Cuidar do jardim (15)</option>
+        <option value="Cuidar das crianças">Cuidar das crianças (25)</option>
+        <option value="Cozinhar refeição">Cozinhar refeição (20)</option>
       </select>
     </label>
     <button onclick="addEntry()">Adicionar Pontos</button>
@@ -72,7 +80,12 @@
       'Dever de casa': 15,
       'Ajudar familia': 15,
       'Ler 30min': 20,
-      'Atividade fisica': 20
+      'Atividade fisica': 20,
+      'Fazer compras': 20,
+      'Pagar contas': 15,
+      'Cuidar do jardim': 15,
+      'Cuidar das crianças': 25,
+      'Cozinhar refeição': 20
     };
 
     function addEntry() {
@@ -90,10 +103,16 @@
       const tbody = document.getElementById('entries');
       tbody.innerHTML = '';
       entries.forEach(e => {
+        let playerName = '';
+        if (e.player === 'adolescente') playerName = 'Filho Adolescente';
+        else if (e.player === 'menor') playerName = 'Filha Mais Nova';
+        else if (e.player === 'pai') playerName = 'Pai';
+        else if (e.player === 'mae') playerName = 'Mãe';
+
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>${e.id}</td>
-          <td>${e.player === 'adolescente' ? 'Filho Adolescente' : 'Filha Mais Nova'}</td>
+          <td>${playerName}</td>
           <td>${e.task}</td>
           <td>${e.points}</td>
           <td>${e.timestamp}</td>
@@ -111,9 +130,14 @@
 
       const minAdol = 150;
       const minMenor = 100;
+      const minPai = 100;
+      const minMae = 100;
+
       summaryDiv.innerHTML = `
         <p>Pontuação Filho Adolescente: ${totals['adolescente'] || 0} / ${minAdol}</p>
         <p>Pontuação Filha Mais Nova: ${totals['menor'] || 0} / ${minMenor}</p>
+        <p>Pontuação Pai: ${totals['pai'] || 0} / ${minPai}</p>
+        <p>Pontuação Mãe: ${totals['mae'] || 0} / ${minMae}</p>
       `;
     }
   </script>
